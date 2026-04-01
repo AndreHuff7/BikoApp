@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Acesso Minimalista</title>
+    <style>
+        /* Variáveis de Cores e Design Minimalista */
+        :root {
+            --primary-color: #4A90E2;    /* Azul suave amigável */
+            --bg-color: #F5F7FA;         /* Fundo quase branco */
+            --text-color: #333;          /* Texto escuro suave */
+            --white: #FFF;
+            --radius: 12px;
+            --error-color: #E57373;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .container {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08); /* Sombra um pouco mais suave */
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        h2 { color: var(--primary-color); margin-bottom: 25px; }
+        h3 { color: #555; margin-bottom: 20px; font-weight: normal; }
+        h4 { text-align: left; color: #888; font-size: 0.9em; margin-top: 20px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 6px; font-size: 0.85em; color: #666; font-weight: 500; }
+        input {
+            width: 100%; padding: 12px;
+            border: 1px solid #e0e0e0; border-radius: 8px;
+            box-sizing: border-box; font-size: 15px; outline: none;
+            transition: all 0.2s;
+            background-color: #fafafa;
+        }
+        input:focus { border-color: var(--primary-color); background-color: #fff; }
+
+        button {
+            width: 100%; padding: 14px;
+            background-color: var(--primary-color); color: white;
+            border: none; border-radius: 8px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: background 0.2s; margin-top: 10px;
+        }
+        button:hover { background-color: #357ABD; }
+
+        button.secondary { background: transparent; color: var(--primary-color); border: 2px solid #eef2f7; }
+        button.secondary:hover { background: #f0f7ff; border-color: var(--primary-color); }
+        
+        button.link { background: none; color: #999; font-size: 0.9em; margin-top: 15px; font-weight: normal; text-decoration: underline; }
+        button.link:hover { color: var(--primary-color); background: none; }
+
+        button.danger { background-color: #ffebec; color: #d32f2f; margin-top: 30px; font-size: 0.9em; }
+        button.danger:hover { background-color: #ffe0e2; }
+
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeUp 0.4s ease; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Estilização da Lista (Admin) */
+        .user-list { text-align: left; margin-top: 20px; }
+        .user-card {
+            background: #fff; border: 1px solid #eee;
+            padding: 15px; margin-bottom: 12px; border-radius: 8px;
+            position: relative;
+        }
+        .user-card::before {
+            content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 4px;
+            background-color: var(--primary-color); border-radius: 0 4px 4px 0;
+        }
+        .user-card.Provedor::before { background-color: #4DB6AC; } /* Cor Diferente para Provedor */
+        
+        .user-card strong { display: block; color: #333; font-size: 1.05em; margin-bottom: 5px; }
+        .user-card small { display: block; color: #999; margin-top: 8px; font-size: 0.8em; }
+
+        /* Estilos específicos para a Home */
+        .welcome-badge {
+            font-size: 1.1em; padding: 8px 20px;
+            background-color: #eef5fc; border-radius: 20px;
+            color: var(--primary-color); display: inline-block; margin-bottom: 20px;
+        }
+        .admin-badge { color: #D32F2F; background-color: #FFEBEE; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- TELA DE LOGIN -->
+        <div id="login-screen" class="screen active">
+            <h2>Bem-vindo</h2>
+            <div class="input-group">
+                <label>Usuário</label>
+                <input type="text" id="login-user" placeholder="Digite seu usuário">
+            </div>
+            <div class="input-group">
+                <label>Senha</label>
+                <input type="password" id="login-pass" placeholder="Digite sua senha">
+            </div>
+            
+            <button onclick="fazerLogin()">Entrar</button>
+            <button class="link" onclick="mostrarTela('register-selection-screen')">Não tem conta? Cadastre-se</button>
+        </div>
+
+        <!-- TELA DE SELEÇÃO DE TIPO DE CADASTRO -->
+        <div id="register-selection-screen" class="screen">
+            <h3>Criar conta como:</h3>
+            
+            <button onclick="mostrarTela('register-worker-screen')">Trabalhador</button>
+            <button class="secondary" onclick="mostrarTela('register-provider-screen')">Provedor</button>
+            
+            <br><br>
+            <button class="link" onclick="mostrarTela('login-screen')">Voltar ao Login</button>
+        </div>
+
+        <!-- CADASTRO TRABALHADOR -->
+        <div id="register-worker-screen" class="screen">
+            <h2>Cadastro Trabalhador</h2>
+            
+            <h4>Dados Pessoais</h4>
+            <div class="input-group">
+                <label>Nome</label>
+                <input type="text" id="worker-name">
+            </div>
+            <div class="input-group">
+                <label>Idade</label>
+                <input type="number" id="worker-age">
+            </div>
+            <div class="input-group">
+                <label>Onde mora</label>
+                <input type="text" id="worker-address">
+            </div>
+            <div class="input-group">
+                <label>O que faz (Profissão)</label>
+                <input type="text" id="worker-job">
+            </div>
+
+            <h4>Dados de Acesso (Login)</h4>
+            <div class="input-group">
+                <label>Criar Usuário</label>
+                <input type="text" id="worker-user">
+            </div>
+            <div class="input-group">
+                <label>Criar Senha</label>
+                <input type="password" id="worker-pass">
+            </div>
+
+            <button onclick="finalizarCadastro('Trabalhador')">Concluir Cadastro</button>
+            <button class="link" onclick="mostrarTela('register-selection-screen')">Voltar</button>
+        </div>
+
+        <!-- CADASTRO PROVEDOR -->
+        <div id="register-provider-screen" class="screen">
+            <h2>Cadastro Provedor</h2>
+            
+            <h4>Dados Pessoais</h4>
+            <div class="input-group">
+                <label>Nome</label>
+                <input type="text" id="provider-name">
+            </div>
+            <div class="input-group">
+                <label>Idade</label>
+                <input type="number" id="provider-age">
+            </div>
+            <div class="input-group">
+                <label>Onde mora</label>
+                <input type="text" id="provider-address">
+            </div>
+
+            <h4>Dados de Acesso (Login)</h4>
+            <div class="input-group">
+                <label>Criar Usuário</label>
+                <input type="text" id="provider-user">
+            </div>
+            <div class="input-group">
+                <label>Criar Senha</label>
+                <input type="password" id="provider-pass">
+            </div>
+
+            <button onclick="finalizarCadastro('Provedor')">Concluir Cadastro</button>
+            <button class="link" onclick="mostrarTela('register-selection-screen')">Voltar</button>
+        </div>
+
+        <!-- AREA DO USUÁRIO NORMAL -->
+        <div id="user-home-screen" class="screen">
+            <h2 id="home-title">Bem-vindo(a)!</h2>
+            <div id="user-badge" class="welcome-badge">Usuário</div>
+            
+            <p id="user-message">Você está logado no sistema.</p>
+            <br>
+            <button class="secondary" onclick="logout()">Sair (Logout)</button>
+        </div>
+
+        <!-- AREA DO ADMIN -->
+        <div id="admin-home-screen" class="screen">
+            <h2>Painel do Administrador</h2>
+            <div class="welcome-badge admin-badge">Acesso Total</div>
+            
+            <h3>Cadastros no Sistema</h3>
+            <div id="admin-list" class="user-list">
+                <!-- A lista será preenchida via JavaScript -->
+            </div>
+
+            <button class="danger" onclick="limparBanco()">Limpar Banco de Dados</button>
+            <br>
+            <button class="secondary" onclick="logout()">Sair (Logout)</button>
+        </div>
+
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'app_usuarios_db';
+
+        // --- NAVEGAÇÃO ---
+        function mostrarTela(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => screen.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // --- GERENCIAMENTO DE DADOS (LOCAL STORAGE) ---
+        function getUsuarios() {
+            const usuarios = localStorage.getItem(STORAGE_KEY);
+            try {
+                return usuarios ? JSON.parse(usuarios) : [];
+            } catch (e) {
+                console.error("Erro ao ler dados", e);
+                return [];
+            }
+        }
+
+        function salvarUsuario(usuario) {
+            try {
+                const usuarios = getUsuarios();
+                usuarios.push(usuario);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(usuarios));
+            } catch (e) {
+                alert("Erro ao salvar localmente. Verifique se não está no modo privado.");
+            }
+        }
+
+        function limparBanco() {
+            if(confirm("ATENÇÃO: Isso apagará TODOS os usuários cadastrados. Continuar?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                alert("Banco de dados limpo com sucesso.");
+                carregarAdminDashboard(); // Atualiza a lista (ficara vazia)
+            }
+        }
+
+        // --- LOGIN ---
+        function fazerLogin() {
+            const user = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+
+            // 1. ADMIN (Acesso mestre hardcoded)
+            if (user === 'admin' && pass === 'admin') {
+                carregarAdminDashboard();
+                mostrarTela('admin-home-screen');
+                return;
+            }
+
+            // 2. USUÁRIO COMUM (Acesso via banco de dados local)
+            const usuarios = getUsuarios();
+            const usuarioEncontrado = usuarios.find(u => u.loginUser === user && u.loginPass === pass);
+
+            if (usuarioEncontrado) {
+                carregarUserHome(usuarioEncontrado);
+                mostrarTela('user-home-screen');
+            } else {
+                alert('Usuário ou senha incorretos!');
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-user').value = '';
+            document.getElementById('login-pass').value = '';
+            mostrarTela('login-screen');
+        }
+
+        // --- LOADS ---
+        function carregarUserHome(usuario) {
+            const badge = document.getElementById('user-badge');
+            badge.textContent = usuario.tipo; // "Trabalhador" ou "Provedor"
+            
+            const message = document.getElementById('user-message');
+            message.innerHTML = `Olá, <strong>${usuario.nome}</strong>!<br>Seu cadastro como ${usuario.tipo} está ativo.`;
+        }
+
+        function carregarAdminDashboard() {
+            const listContainer = document.getElementById('admin-list');
+            const usuarios = getUsuarios();
+
+            if (usuarios.length === 0) {
+                listContainer.innerHTML = '<p style="color: #999; text-align: center;">Nenhum usuário cadastrado ainda.</p>';
+                return;
+            }
+
+            let html = '';
+            usuarios.forEach(u => {
+                const cssClass = u.tipo === 'Provedor' ? 'Provedor' : 'Trabalhador';
+                
+                let detalhes = `Idade: ${u.idade}<br>Mora em: ${u.endereco}`;
+                if (u.tipo === 'Trabalhador') {
+                    detalhes += `<br>Faz: ${u.profissao}`;
+                }
+
+                html += `
+                    <div class="user-card ${cssClass}">
+                        <strong>${u.nome} <span class="tag">${u.tipo}</span></strong>
+                        ${detalhes}<br>
+                        <small>Login: ${u.loginUser}</small>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+        }
+
+        // --- CADASTRO ---
+        function finalizarCadastro(tipo) {
+            let nome, idade, endereco, profissao, loginUser, loginPass;
+
+            if (tipo === 'Trabalhador') {
+                nome = document.getElementById('worker-name').value;
+                idade = document.getElementById('worker-age').value;
+                endereco = document.getElementById('worker-address').value;
+                profissao = document.getElementById('worker-job').value;
+                loginUser = document.getElementById('worker-user').value;
+                loginPass = document.getElementById('worker-pass').value;
+            } else {
+                nome = document.getElementById('provider-name').value;
+                idade = document.getElementById('provider-age').value;
+                endereco = document.getElementById('provider-address').value;
+                profissao = null;
+                loginUser = document.getElementById('provider-user').value;
+                loginPass = document.getElementById('provider-pass').value;
+            }
+
+            if (!nome || !loginUser || !loginPass) {
+                alert('Preencha pelo menos Nome, Usuário e Senha.');
+                return;
+            }
+
+            // Impede uso do nome "admin"
+            if (loginUser.toLowerCase() === 'admin') {
+                alert('Este nome de usuário é reservado.');
+                return;
+            }
+
+            const usuarios = getUsuarios();
+            if (usuarios.some(u => u.loginUser === loginUser)) {
+                alert('Usuário já existe. Escolha outro.');
+                return;
+            }
+
+            const novoUsuario = {
+                tipo, nome, idade, endereco, profissao, loginUser, loginPass
+            };
+
+            salvarUsuario(novoUsuario);
+            alert('Cadastro realizado com sucesso! Faça login com seus novos dados.');
+            
+            // Limpa campos
+            document.querySelectorAll('input').forEach(i => i.value = '');
+            mostrarTela('login-screen');
+        }
+    </script>
+
+</body>
+</html>
