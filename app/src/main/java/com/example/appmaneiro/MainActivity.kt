@@ -22,14 +22,9 @@ import androidx.compose.foundation.border
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.foundation.background
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.draw.clip
 import kotlinx.coroutines.delay
 class MainActivity : ComponentActivity() {
@@ -46,7 +41,7 @@ class MainActivity : ComponentActivity() {
                     TelaDeLoading()
                 }
                 "segunda" -> {
-                    SegundaTela(onProximoClick = { telaAtual = "terceira" })
+                    SegundaTela(onProximoClick = { })
                 }
                 "terceira" -> {
                     HubPrincipal()
@@ -138,21 +133,21 @@ fun SegundaTela(onProximoClick: () -> Unit) {
 
 @Composable
 fun HubPrincipal() {
-    val BlueHeader = Color(0xFF255EE6)
-    val Background = Color(0xFFF2F5FA)
-    val OrangeBanner = Color(0xFFF09A00)
+    val blueHeader = Color(0xFF255EE6)
+    val background = Color(0xFFF2F5FA)
+    val orangeBanner = Color(0xFFF09A00)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(background)
     ) {
         // Header Azul
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-                .background(BlueHeader)
+                .background(blueHeader)
                 .padding(24.dp)
         ) {
             Row(
@@ -229,7 +224,7 @@ fun HubPrincipal() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(OrangeBanner)
+                    .background(orangeBanner)
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -248,8 +243,8 @@ fun HubPrincipal() {
                     )
                 }
                 Button(
-                    onClick = { /*TODO*/ },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = BlueHeader),
+                    onClick = {},
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = blueHeader),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                     modifier = Modifier.height(32.dp)
                 ) {

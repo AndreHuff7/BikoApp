@@ -9,7 +9,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4fe113eb-2fb4-448c-acf2-15139e7ca753" name="Changes" comment="">
+    <list default="true" id="4fe113eb-2fb4-448c-acf2-15139e7ca753" name="Changes" comment="Update de Desing de Telas e adição de uma logo (Provisoria)&#10;&#10;O Desing vai ser feito em app de terceiros para nao gastar meus tokens!">
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/appmaneiro/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/appmaneiro/MainActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
     </list>
@@ -191,6 +191,15 @@
       <option name="presentableId" value="Default" />
       <updated>1774473785129</updated>
     </task>
+    <task id="LOCAL-00001" summary="Update de Desing de Telas e adição de uma logo (Provisoria)&#10;&#10;O Desing vai ser feito em app de terceiros para nao gastar meus tokens!">
+      <option name="closed" value="true" />
+      <created>1776210852474</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1776210852474</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -203,6 +212,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Update de Desing de Telas e adição de uma logo (Provisoria)&#10;&#10;O Desing vai ser feito em app de terceiros para nao gastar meus tokens!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update de Desing de Telas e adição de uma logo (Provisoria)&#10;&#10;O Desing vai ser feito em app de terceiros para nao gastar meus tokens!" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
