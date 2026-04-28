@@ -4,7 +4,7 @@ Atualmente está em fase de prototipagem
 
 Integrantes
 
-André, Garoto de programa
-Leo, Ministro da Inutilidade
-Felipe, Lider e Ministro dos Documentos
-Júlia, Ministra das cores e Desing
+André, Garoto de programa /n
+Leo, Ministro da Inutilidade /n
+Felipe, Lider e Ministro dos Documentos /n
+Júlia, Ministra das cores e Desing /n
