@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             var telaAtual by remember { mutableStateOf("loading") }
             LaunchedEffect(Unit) {
-                delay(3000)
+                delay(5000)
                 telaAtual = "segunda"
             }
             when (telaAtual) {
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     TelaDeLoading()
                 }
                 "segunda" -> {
-                    SegundaTela(onProximoClick = { })
+                    SegundaTela(onProximoClick = { telaAtual = "terceira" })
                 }
                 "terceira" -> {
                     HubPrincipal()
@@ -50,25 +51,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 @Composable
-fun TelaDeLoading() { // --- FUNÇÕES DAS TELAS ---
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Biko App",
-            fontSize = 60.sp,
-            color = Color.Red,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp),
-            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-        )
+fun TelaDeLoading() {
+    Box(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(id = R.drawable.biko),
+            painter = painterResource(id = R.drawable.bikologo),
             contentDescription = "Biko",
-            modifier = Modifier.size(200.dp),
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -78,18 +69,66 @@ fun SegundaTela(onProximoClick: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
+    var isCliente by remember { mutableStateOf(true) }
+
+    val blueHeader = Color(0xFF255EE6)
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF2F5FA))
+            .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Login",
-            fontSize = 32.sp,
-            color = Color.Black,
-            fontWeight = FontWeight.Bold
+            text = "Biko App",
+            fontSize = 36.sp,
+            color = blueHeader,
+            fontWeight = FontWeight.Bold,
+            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Bem-vindo de volta!",
+            fontSize = 14.sp,
+            color = Color.Gray
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Toggle Cliente / Prestador
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(50))
+                .background(Color(0xFFE0E7FF))
+                .padding(4.dp)
+        ) {
+            Button(
+                onClick = { isCliente = true; username = ""; password = ""; errorMessage = "" },
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = if (isCliente) blueHeader else Color.Transparent
+                ),
+                elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(0.dp),
+                shape = RoundedCornerShape(50),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
+            ) {
+                Text("Cliente", color = if (isCliente) Color.White else Color.Gray, fontWeight = FontWeight.Bold)
+            }
+            Button(
+                onClick = { isCliente = false; username = ""; password = ""; errorMessage = "" },
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = if (!isCliente) blueHeader else Color.Transparent
+                ),
+                elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(0.dp),
+                shape = RoundedCornerShape(50),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
+            ) {
+                Text("Prestador", color = if (!isCliente) Color.White else Color.Gray, fontWeight = FontWeight.Bold)
+            }
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -97,7 +136,8 @@ fun SegundaTela(onProximoClick: () -> Unit) {
             value = username,
             onValueChange = { username = it },
             label = { Text("Usuário") },
-            singleLine = true
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -106,27 +146,42 @@ fun SegundaTela(onProximoClick: () -> Unit) {
             value = password,
             onValueChange = { password = it },
             label = { Text("Senha") },
-            singleLine = true
+            singleLine = true,
+            visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
         )
 
         if (errorMessage.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = errorMessage, color = Color.Red)
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = errorMessage, color = Color.Red, fontSize = 13.sp)
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
-        Button(onClick = {
-            if (username.isBlank() || password.isBlank()) {
-                errorMessage = "Por favor, preencha todos os campos."
-            } else if (username == "admin" && password == "admin") {
-                errorMessage = ""
-                onProximoClick()
-            } else {
-                errorMessage = "Usuário ou senha incorretos."
-            }
-        }) {
-            Text("Entrar")
+        Button(
+            onClick = {
+                val correctUser = if (isCliente) "PedroLouco" else "RobertoLegal"
+                val correctPass = if (isCliente) "Doido" else "Legal"
+                when {
+                    username.isBlank() || password.isBlank() -> {
+                        errorMessage = "Por favor, preencha todos os campos."
+                    }
+                    username == correctUser && password == correctPass -> {
+                        errorMessage = ""
+                        onProximoClick()
+                    }
+                    else -> {
+                        errorMessage = "Usuário ou senha incorretos."
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = blueHeader)
+        ) {
+            Text("Entrar", fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
